@@ -14,8 +14,8 @@ public class TextWrite : MonoBehaviour
     }
     void Update()
     {
-        healthText.text = $"Health: {DataPlayer.health}";
-        staminaText.text = $"Stamina: {DataPlayer.stamina}";
+        healthText.text = $"Health: {DataPlayer.health} / 100";
+        staminaText.text = $"Stamina: {Mathf.Round(DataPlayer.stamina)} / {DataPlayer.baseS}";
         moneyText.text = $"Money: {DataPlayer.money}";
     }
 }

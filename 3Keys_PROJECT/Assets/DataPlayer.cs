@@ -1,47 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class DataPlayer
 {
     private static float _stamina = 40f;
     private static int _health = 100;
     private static int _money = 0;
+    private static int _baseS = 40;
+
+    // Добавляем метод для полного сброса
+    public static void ResetData()
+    {
+        _stamina = 40f;
+        _health = 100;
+        _money = 0;
+        _baseS = 40;
+    }
 
     public static float stamina
     {
-        get
-        {
-            return _stamina;
-        }
-
-        set 
-        {
-            _stamina = value;
-        }
+        get => _stamina;
+        set => _stamina = Mathf.Clamp(value, 0, _baseS);
     }
+
     public static int health
     {
-        get
-        {
-            return _health;
-        }
-
-        set
-        {
-            _health = value;
-        }
+        get => _health;
+        set => _health = Mathf.Clamp(value, 0, 100);
     }
+
     public static int money
     {
-        get
-        {
-            return _money;
-        }
+        get => _money;
+        set => _money = Mathf.Max(0, value);
+    }
 
-        set
-        {
-            _money = value;
-        }
+    public static int baseS
+    {
+        get => _baseS;
+        set => _baseS = Mathf.Max(10, value);
     }
 }
