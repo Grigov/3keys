@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using UnityEditor.SearchService;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour
 {
@@ -43,7 +45,7 @@ public class Health : MonoBehaviour
             if (this.CompareTag("Player"))
             {
                 Debug.Log("Игрок умер! Game Over");
-                // Здесь можно добавить перезагрузку сцены или экран смерти
+                SceneManager.LoadScene(2);
                 Time.timeScale = 0f; // Останавливаем игру
             }
             else if (this.CompareTag("Enemy"))

@@ -40,12 +40,20 @@ public class Enemy : MonoBehaviour
                 AttackPlayer();
             }
         }
+        else
+        {
+            Patrule();
+        }
         float distToPlayer = Vector2.Distance(transform.position, player.position);
 
         if (!isAggressive && distToPlayer <= aggressionRange)
         {
             isAggressive = true;
         }
+    }
+    void Patrule()
+    {
+        rb.velocity = Vector2.zero;
     }
 
     void ChasePlayer()
