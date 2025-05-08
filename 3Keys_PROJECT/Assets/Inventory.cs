@@ -48,7 +48,6 @@ public class Inventory : MonoBehaviour
         }
         if (isFull)
         {
-            UnityEngine.Debug.Log("Инвентарь полон!");
             return false;
         }
 
@@ -88,12 +87,10 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        // Меняем местами слоты
         ItemSlot temp = slots[indexA];
         slots[indexA] = slots[indexB];
         slots[indexB] = temp;
 
-        // Обновляем UI
         if (InventoryUI.Instance != null)
             InventoryUI.Instance.RefreshInventory();
     }

@@ -12,7 +12,6 @@ public class Health : MonoBehaviour
 
     void Start()
     {
-        // Используем сохраненное здоровье или максимальное
         currentHealth = (this.CompareTag("Player")) ? DataPlayer.health : maxHealth;
     }
 

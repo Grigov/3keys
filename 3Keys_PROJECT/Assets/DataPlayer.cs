@@ -8,7 +8,6 @@ public static class DataPlayer
     private static int _baseS = 40;
     private static int _keys;
 
-    // Добавляем метод для полного сброса
     public static void ResetData()
     {
         _stamina = 40f;
