@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -8,13 +9,14 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float runMultiplier = 2f;
     public float dashCooldown = 1f;
+    public bool canMove = true; // Одно объявление - удалено дублирование
 
     [Header("Stamina Settings")]
     public float staminaDrainRate = 5f;
     public float staminaRegenRate = 15f;
     public float regenDelay = 0f;
 
-    [Header("Settings _DASH_")]
+    [Header("Dash Settings")]
     public float dashSpeed = 20f;
     public float dashDuration = 0.3f;
     public float dashDistance = 2.5f;
@@ -30,8 +32,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isRunning;
     private float lastMoveTime;
     private float lastDashTime = -10f;
-
-
     private Health playerHealth;
 
     void Start()
@@ -43,27 +43,27 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (playerHealth.IsDead())
+        if (!canMove || playerHealth.IsDead())
         {
             rb.velocity = Vector2.zero;
             return;
         }
-
         HandleMouseAiming();
         HandleDashInput();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector2 attackDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position);
-            currentWeapon?.Attack(attackDirection.normalized);
-        }
 
         if (Input.GetMouseButtonDown(0) && currentWeapon != null)
         {
             Vector2 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
             currentWeapon.Attack(dir);
+        }
 
-            Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentWeapon.attackRange, currentWeapon.enemyLayer);
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if (Inventory.Instance.slots.Length > 0 && Inventory.Instance.slots[0].item != null)
+            {
+                var item = Inventory.Instance.slots[0].item;
+                item.Use();
+            }
         }
     }
 
@@ -147,22 +147,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement(Vector2 input)
     {
-        float speedMultiplier = 1f;
-
-        if (DataPlayer.stamina <= 0)
+        if (canMove)
         {
-            speedMultiplier = 0.5f;
-        }
-        else if (isRunning)
-        {
-            speedMultiplier = runMultiplier;
-        }
+            float speedMultiplier = 1f;
 
-        Vector2 movement = input.normalized * moveSpeed * speedMultiplier;
-        rb.velocity = movement;
+            if (DataPlayer.stamina <= 0)
+            {
+                speedMultiplier = 0.5f;
+            }
+            else if (isRunning)
+            {
+                speedMultiplier = runMultiplier;
+            }
 
-        if (input.x != 0) sprite.flipX = input.x < 0;
-        if (input.y != 0) sprite.flipY = input.y < 0;
+            Vector2 movement = input.normalized * moveSpeed * speedMultiplier;
+            rb.velocity = movement;
+
+            if (input.x != 0) sprite.flipX = input.x < 0;
+            if (input.y != 0) sprite.flipY = input.y < 0;
+        } 
     }
 
     public void EquipWeapon(Weapon newWeapon)
@@ -175,4 +178,5 @@ public class PlayerMovement : MonoBehaviour
         currentWeapon = Instantiate(newWeapon, weaponHolder);
         currentWeapon.transform.localPosition = Vector3.zero;
     }
+    
 }

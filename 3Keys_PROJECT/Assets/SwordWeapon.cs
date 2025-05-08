@@ -46,12 +46,14 @@ public class SwordWeapon : Weapon
 
         // 4. Визуализация (только в редакторе)
         Debug.DrawRay(transform.position, direction * attackRange, Color.red, 1f);
+        #if UNITY_EDITOR
         DrawAttackArc(direction);
+        #endif
     }
 
+    #if UNITY_EDITOR
     void DrawAttackArc(Vector2 direction)
     {
-#if UNITY_EDITOR
         Vector3 startDir = Quaternion.Euler(0, 0, -attackAngle / 2) * direction;
         UnityEditor.Handles.color = new Color(1, 0, 0, 0.1f);
         UnityEditor.Handles.DrawSolidArc(
@@ -61,8 +63,10 @@ public class SwordWeapon : Weapon
             attackAngle,
             attackRange
         );
-#endif
     }
+    #endif
+
+
 
     void OnDrawGizmosSelected()
     {
