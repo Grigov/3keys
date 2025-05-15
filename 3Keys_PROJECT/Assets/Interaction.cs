@@ -15,15 +15,15 @@ public class Interaction : MonoBehaviour
     private bool isEnterNear = false;
     private bool isEnter1Near = false;
 
-    void Start()
-    {
-        InfoPanel.SetActive(true);
-    }
+    //void Start()
+    //{
+    //    InfoPanel.SetActive(true);
+    //}
 
-    public void ExitInfoPanel()
-    {
-        InfoPanel.SetActive(false);
-    }
+    //public void ExitInfoPanel()
+    //{
+    //    InfoPanel.SetActive(false);
+    //}
 
 
 

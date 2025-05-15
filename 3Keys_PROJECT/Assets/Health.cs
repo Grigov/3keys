@@ -51,7 +51,7 @@ public class Health : MonoBehaviour
         {
             if (this.CompareTag("Player"))
             {
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
                 Time.timeScale = 0f;
             }
             else if (this.CompareTag("Enemy"))
