@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de99b6f532c45c74aae5b7d0d175570d, type: 3}
   m_Name: WeaponItem
   m_EditorClassIdentifier: 
+  sellPrice: 15
   itemName: "\u041C\u0435\u0447"
-  icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: d8e57f013037b2c41b0b92eb9aee5c3e, type: 3}
   stackable: 0
+  restoreAmount: 0
+  itemType: 1
   description: "\u041E\u0440\u0443\u0436\u0438\u0435 \u0441 \u0443\u0440\u043E\u043D\u043E\u043C
     \u0432 10 \u0435\u0434\u0435\u043D\u0438\u0446"
-  weaponPrefab: {fileID: 7450741570990294542, guid: f25a3ff14f35bd94fa4d087e0b828ca0, type: 3}
+  weaponPrefab: {fileID: 5646530455028288655, guid: f469d75b35770884f9beba461f356c8a, type: 3}

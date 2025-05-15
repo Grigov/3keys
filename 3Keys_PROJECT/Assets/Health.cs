@@ -1,4 +1,6 @@
-﻿using UnityEditor.SearchService;
+﻿using System.Diagnostics;
+using System;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +17,13 @@ public class Health : MonoBehaviour
         currentHealth = (this.CompareTag("Player")) ? DataPlayer.health : maxHealth;
     }
 
+    public void Heal(int amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        DataPlayer.health = (int)currentHealth;
+        UnityEngine.Debug.Log($"Heal! count = {amount}");
+    }
+
     public void TakeDamage(float damage)
     {
         if (isInvincible || IsDead()) return;
@@ -24,15 +33,14 @@ public class Health : MonoBehaviour
         if (this.CompareTag("Player"))
         {
             DataPlayer.health = (int)currentHealth;
-            Debug.Log($"Игрок получил {damage} урона. Осталось {currentHealth} HP");
         }
         else
         {
-            Debug.Log($"{name} получил {damage} урона. Осталось {currentHealth} HP");
         }
 
         if (IsDead())
         {
+            UnityEngine.Debug.Log($"умирает!");
             Die();
         }
     }
@@ -43,16 +51,15 @@ public class Health : MonoBehaviour
         {
             if (this.CompareTag("Player"))
             {
-                Debug.Log("Игрок умер! Game Over");
-                SceneManager.LoadScene(2);
-                Time.timeScale = 0f; // Останавливаем игру
+                SceneManager.LoadScene(1);
+                Time.timeScale = 0f;
             }
             else if (this.CompareTag("Enemy"))
             {
-                Debug.Log($"{name} умер!");
                 GetComponent<Collider2D>().enabled = false;
                 Destroy(gameObject, 0.5f);
             }
         }
     }
+
 }

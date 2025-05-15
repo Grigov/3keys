@@ -10,6 +10,8 @@ TagManager:
   - Enter
   - Enter1
   - Enter2
+  - Stairs
+  - End
   layers:
   - Default
   - TransparentFX

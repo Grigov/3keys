@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -17,6 +19,12 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     public float aggressionRange = 8f;
     private bool isAggressive;
+    private bool lootDropped = false;
+
+    [Header("Loot")]
+    public GameObject[] lootPrefabs; // Префабы предметов (например, меч, зелье и т.д.)
+    public float dropChance = 1f; // Вероятность дропа (0..1)
+
 
     void Start()
     {
@@ -27,7 +35,15 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (player == null || health.IsDead()) return;
+        if (player == null || health.IsDead())
+        {
+            if (health.IsDead() && !lootDropped)
+            {
+                DropLoot();
+                lootDropped = true;
+            }
+            return;
+        }
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
@@ -78,7 +94,7 @@ public class Enemy : MonoBehaviour
         if (Vector2.Distance(transform.position, player.position) <= attackRange)
         {
             player.GetComponent<Health>().TakeDamage(damage);
-            Debug.Log($"Враг нанес {damage} урона игроку!");
+            //Debug.Log($"Враг нанес {damage} урона игроку!");
         }
     }
 
@@ -98,4 +114,20 @@ public class Enemy : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
+
+    void DropLoot()
+    {
+        if (lootPrefabs.Length == 0) return;
+
+        foreach (var loot in lootPrefabs)
+        {
+            if (UnityEngine.Random.value <= dropChance)
+            {
+                Instantiate(loot, transform.position, Quaternion.identity);
+            }
+        }
+
+        //Debug.Log("Враг уронил предметы!");
+    }
+
 }

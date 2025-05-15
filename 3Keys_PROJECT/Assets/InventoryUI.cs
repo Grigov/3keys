@@ -25,7 +25,6 @@ public class InventoryUI : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //UnityEngine.Debug.Log("InventoryUI instance initialized.");
         }
         else
         {
@@ -51,6 +50,22 @@ public class InventoryUI : MonoBehaviour
 
     void OnItemClick(int index)
     {
+        UnityEngine.Debug.Log($"OnItemClick! i = {index}");
+        var slot = Inventory.Instance.slots[index];
+        if (slot.item == null) return;
+        Item item = slot.item;
+
+        switch (item.itemType)
+        {
+            case ItemType.Weapon:
+                PlayerEquipment.Instance.EquipWeapon(item as WeaponItem);
+                break;
+
+            case ItemType.Consumable:
+                UseConsumable(item, index);
+                break;
+        }
+
         if (index < 0 || index >= Inventory.Instance.slots.Length)
         {
             UnityEngine.Debug.LogError($"Некорректный индекс: {index}");
@@ -76,6 +91,22 @@ public class InventoryUI : MonoBehaviour
                 UnityEngine.Debug.LogError("Экземпляр PlayerEquipment не найден!");
             }
         }
+    }
+
+    void UseConsumable(Item item, int slotIndex)
+    {
+        UnityEngine.Debug.Log($"UseConsumable! item = {item}, slot i = {slotIndex}");
+        Health playerHealth = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Health>();
+        if (playerHealth == null) return;
+
+        playerHealth.Heal(item.restoreAmount);
+
+        Inventory.Instance.slots[slotIndex].count--;
+
+        if (Inventory.Instance.slots[slotIndex].count <= 0)
+            Inventory.Instance.slots[slotIndex].item = null;
+
+        InventoryUI.Instance?.RefreshInventory();
     }
 
     public void RefreshInventory()
@@ -139,13 +170,10 @@ public class InventoryUI : MonoBehaviour
 
     public void ShowItemDescription(int index, Vector2 screenPosition)
     {
-        //UnityEngine.Debug.Log($"ПКМ на слоте {index}");
         
         var slots = Inventory.Instance.slots;
         if (index < 0 || index >= Inventory.Instance.slots.Length) return;
         
-
-        // Используем полное имя класса: Inventory.ItemSlot
         Inventory.ItemSlot slot = Inventory.Instance.slots[index];
 
         if (slot.item == null)

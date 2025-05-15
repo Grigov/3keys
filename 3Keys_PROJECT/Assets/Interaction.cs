@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEngine.UI;
+using UnityEngine;
 
 public class Interaction : MonoBehaviour
 {
@@ -6,39 +7,57 @@ public class Interaction : MonoBehaviour
     public GameObject fElement;
     public GameObject enter0;
     public GameObject enter1;
-    public GameObject enter2;
+    public GameObject InfoPanel;
+    public GameObject endPanel;
+    private bool isEndPanelNear = false;
     private bool isPlayerNear = false;
     private bool isShopUINear = false;
     private bool isEnterNear = false;
     private bool isEnter1Near = false;
-    private bool isEnter2Near = false;
+
+    void Start()
+    {
+        InfoPanel.SetActive(true);
+    }
+
+    public void ExitInfoPanel()
+    {
+        InfoPanel.SetActive(false);
+    }
+
+
 
     void Update()
     {
         if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isShopUINear)
         {
             shopUI.SetActive(!shopUI.activeSelf);
+            ShopUI.Instance.ShowSellMenu();
+            ShopUI.Instance.ShowBuyMenu();
         }
 
-        if(isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnterNear)
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnterNear)
         {
             enter0.SetActive(!enter0.activeSelf);
         }
 
-        if(isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnter1Near)
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnter1Near)
         {
             enter1.SetActive(!enter1.activeSelf);
         }
 
-        if(isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnter2Near)
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEndPanelNear)
         {
-            enter2.SetActive(!enter2.activeSelf);
+            if (DataPlayer.keys >= 3)
+            {
+                endPanel.SetActive(!endPanel.activeSelf);
+            }
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Shop") || other.CompareTag("Enter") || other.CompareTag("Enter1") || other.CompareTag("Enter2"))
+        if (other.CompareTag("Shop") || other.CompareTag("Enter") || other.CompareTag("Enter1") || other.CompareTag("End"))
         {
             isPlayerNear = true;
             fElement.SetActive(true);
@@ -54,16 +73,16 @@ public class Interaction : MonoBehaviour
             {
                 isEnter1Near = true;
             }
-            else if (other.CompareTag("Enter2"))
+            else if (!other.CompareTag("End"))
             {
-                isEnter2Near = true;
+                isEndPanelNear = true;
             }
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Shop") || other.CompareTag("Enter") || other.CompareTag("Enter1") || other.CompareTag("Enter2"))
+        if (other.CompareTag("Shop") || other.CompareTag("Enter") || other.CompareTag("Enter1") || other.CompareTag("End"))
         {
             isPlayerNear = false;
             fElement.SetActive(false);
@@ -82,10 +101,10 @@ public class Interaction : MonoBehaviour
                 enter1.SetActive(false);
                 isEnter1Near = false;
             }
-            else if (other.CompareTag("Enter2"))
+            else if (other.CompareTag("End"))
             {
-                enter2.SetActive(false);
-                isEnter2Near = false;
+                endPanel.SetActive(false);
+                isEndPanelNear = false;
             }
         }
     }

@@ -6,9 +6,12 @@ public class CameraFollow : MonoBehaviour
 {
     public Transform target;
     public float CameraOffset = -10f;
+
     void LateUpdate()
     {
-        Vector3 targetPosition = target.transform.position;
+        if (target == null) return;
+
+        Vector3 targetPosition = target.position;
         transform.position = new Vector3(targetPosition.x, targetPosition.y, CameraOffset);
     }
 }

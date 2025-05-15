@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+
 
 public class PlayerEquipment : MonoBehaviour
 {
@@ -25,10 +27,13 @@ public class PlayerEquipment : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (Input.GetMouseButtonDown(0) && currentWeapon != null)
         {
-            Vector2 direction = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
-            currentWeapon.Attack(direction);
+            Vector2 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+            currentWeapon.Attack(dir);
         }
     }
 }

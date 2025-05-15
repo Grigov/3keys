@@ -31,33 +31,36 @@ public class Inventory : MonoBehaviour
             {
                 slots[i] = new ItemSlot();
             }
+            DontDestroyOnLoad(gameObject);
         }
         else Destroy(gameObject);
     }
 
+    public void RemoveItem(int index, int amount = 1)
+    {
+        if (index < 0 || index >= slots.Length) return;
+
+        var slot = slots[index];
+        if (slot.item == null || slot.count <= 0) return;
+
+        slot.count -= amount;
+
+        if (slot.count <= 0)
+            slot.item = null;
+
+        InventoryUI.Instance?.RefreshInventory();
+    }
+
     public bool AddItem(Item newItem)
     {
-        bool isFull = true;
-        foreach (var slot in slots)
-        {
-            if (slot.item == null)
-            {
-                isFull = false;
-                break;
-            }
-        }
-        if (isFull)
-        {
-            return false;
-        }
-
         if (newItem.stackable)
         {
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].item == newItem)
+                if (slots[i].item != null && slots[i].item == newItem)
                 {
                     slots[i].count++;
+                    InventoryUI.Instance?.RefreshInventory();
                     return true;
                 }
             }
@@ -70,15 +73,15 @@ public class Inventory : MonoBehaviour
                 slots[i].item = newItem;
                 slots[i].count = 1;
 
-                if (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen())
-                    InventoryUI.Instance.RefreshInventory();
-
+                InventoryUI.Instance?.RefreshInventory();
                 return true;
             }
         }
 
+        UnityEngine.Debug.Log("Инвентарь полон!");
         return false;
     }
+
     public void SwapItems(int indexA, int indexB)
     {
         if (indexA < 0 || indexB < 0 || indexA >= capacity || indexB >= capacity)

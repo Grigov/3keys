@@ -11,7 +11,9 @@ public class SwordWeapon : Weapon
         // 1. Визуальный эффект
         if (slashEffect)
         {
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, direction);
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.Euler(0, 0, angle);
+
             Instantiate(slashEffect, transform.position, rotation);
         }
 
@@ -68,9 +70,9 @@ public class SwordWeapon : Weapon
 
 
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
+    //void OnDrawGizmosSelected()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, attackRange);
+    //}
 }

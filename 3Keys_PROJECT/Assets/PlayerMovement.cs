@@ -5,25 +5,28 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float angleOffset = 90f;
+
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float runMultiplier = 2f;
-    public float dashCooldown = 1f;
-    public bool canMove = true; // Одно объявление - удалено дублирование
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float runMultiplier = 2f;
+    [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private bool canMove = true;
 
     [Header("Stamina Settings")]
-    public float staminaDrainRate = 5f;
-    public float staminaRegenRate = 15f;
-    public float regenDelay = 0f;
+    [SerializeField] private float staminaDrainRate = 5f;
+    [SerializeField] private float staminaRegenRate = 15f;
+    [SerializeField] private float regenDelay = 0f;
 
     [Header("Dash Settings")]
-    public float dashSpeed = 20f;
-    public float dashDuration = 0.3f;
-    public float dashDistance = 2.5f;
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashDuration = 0.3f;
+    [SerializeField] private float dashDistance = 2.5f;
 
     [Header("Combat Settings")]
-    public Weapon currentWeapon;
-    public Transform weaponHolder;
+    [SerializeField] private Weapon currentWeapon;
+    [SerializeField] private Transform weaponHolder;
 
     private Rigidbody2D rb;
     private SpriteRenderer sprite;
@@ -43,6 +46,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(Keybindings.keys["Attack"]) && currentWeapon != null)
+        {
+            Vector2 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+            currentWeapon.Attack(dir);
+        }
+
+        if (Input.GetKeyDown(Keybindings.keys["Dash"]) && Time.time > lastDashTime + dashCooldown)
+        {
+            StartCoroutine(PerformDash());
+        }
+
         if (!canMove || playerHealth.IsDead())
         {
             rb.velocity = Vector2.zero;
@@ -80,12 +94,23 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
+
         Vector2 direction = (mousePosition - transform.position).normalized;
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float currentAngle = Mathf.LerpAngle(
+            transform.eulerAngles.z,
+            targetAngle - angleOffset,
+            rotationSpeed * Time.deltaTime
+        );
 
-        sprite.flipY = direction.x < 0;
+        transform.rotation = Quaternion.Euler(0, 0, currentAngle);
+
+        bool shouldFlip = direction.x < 0;
+        if (sprite.flipY != shouldFlip)
+        {
+            sprite.flipY = shouldFlip;
+        }
     }
 
     private void HandleDashInput()
@@ -163,8 +188,8 @@ public class PlayerMovement : MonoBehaviour
             Vector2 movement = input.normalized * moveSpeed * speedMultiplier;
             rb.velocity = movement;
 
-            if (input.x != 0) sprite.flipX = input.x < 0;
-            if (input.y != 0) sprite.flipY = input.y < 0;
+            //if (input.x != 0) sprite.flipX = input.x < 0;
+            //if (input.y != 0) sprite.flipY = input.y < 0;
         } 
     }
 
