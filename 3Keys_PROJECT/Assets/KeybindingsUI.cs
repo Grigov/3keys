@@ -22,12 +22,13 @@ public class KeybindingsUI : MonoBehaviour
 
     void OnGUI()
     {
-        if (keyToRebind == null) return;
+        if (string.IsNullOrEmpty(keyToRebind)) return;
 
         Event e = Event.current;
-        if (e.isKey)
+        if (e.isKey || e.isMouse)
         {
-            Keybindings.SaveKey(keyToRebind, e.keyCode);
+            KeyCode key = e.isKey ? e.keyCode : KeyCode.Mouse0 + e.button;
+            Keybindings.SaveKey(keyToRebind, key);
             keyToRebind = null;
             UpdateUI();
         }

@@ -13,6 +13,7 @@ public class ShopUI : MonoBehaviour
     public List<Item> itemsForSale;
     public GameObject buySlotPrefab;
     public Transform buySlotContainer;
+    public Transform weaponSlot;
 
     void Awake()
     {
@@ -40,7 +41,23 @@ public class ShopUI : MonoBehaviour
             uiSlot.transform.Find("Count").GetComponent<UnityEngine.UI.Text>().text = "x" + slot.count;
 
             int indexCopy = i;
-            uiSlot.GetComponentInChildren<Button>()?.onClick.AddListener(() => SellItem(indexCopy));
+            Button slotButton = uiSlot.GetComponentInChildren<Button>();
+            if (slotButton != null)
+            {
+                slotButton.onClick.AddListener(() =>
+                {
+                    SellItem(indexCopy);
+
+                    if (weaponSlot != null)
+                    {
+                        foreach (Transform child in weaponSlot)
+                        {
+                            if (child != null)
+                                Destroy(child.gameObject);
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -55,7 +72,7 @@ public class ShopUI : MonoBehaviour
 
             slot.transform.Find("Icon").GetComponent<UnityEngine.UI.Image>().sprite = item.icon;
             slot.transform.Find("Name").GetComponent<UnityEngine.UI.Text>().text = item.itemName;
-            slot.transform.Find("Price").GetComponent<UnityEngine.UI.Text>().text = item.sellPrice + "ʓ";
+            slot.transform.Find("Price").GetComponent<UnityEngine.UI.Text>().text = $"Цена: {item.sellPrice}ʓ";
 
             Item itemCopy = item;
             slot.GetComponentInChildren<Button>()?.onClick.AddListener(() => BuyItem(item));

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class PlayerEquipment : MonoBehaviour
 {
     public static PlayerEquipment Instance;
-    public Transform weaponSlot; // объект "Weapon" на игроке
+    public Transform weaponSlot;
     private Weapon currentWeapon;
 
     void Awake()
@@ -16,11 +16,9 @@ public class PlayerEquipment : MonoBehaviour
 
     public void EquipWeapon(WeaponItem weaponItem)
     {
-        // Удаляем старое оружие
         foreach (Transform child in weaponSlot)
             Destroy(child.gameObject);
 
-        // Создаём новое
         GameObject weaponGO = Instantiate(weaponItem.weaponPrefab, weaponSlot.position, Quaternion.identity, weaponSlot);
         currentWeapon = weaponGO.GetComponent<Weapon>();
     }

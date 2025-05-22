@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement Settings")]
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float angleOffset = 90f;
 
@@ -115,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleDashInput()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
+        if (Input.GetKeyDown(Keybindings.keys["Dash"]) && Time.time > lastDashTime + dashCooldown)
         {
             StartCoroutine(PerformDash());
         }
@@ -153,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleStamina(Vector2 input)
     {
-        isRunning = Input.GetKey(KeyCode.LeftShift) && input != Vector2.zero;
+        isRunning = Input.GetKey(Keybindings.keys["Run"]) && input != Vector2.zero;
         isMoving = input != Vector2.zero && !isRunning;
 
         if (isRunning)
@@ -187,9 +188,6 @@ public class PlayerMovement : MonoBehaviour
 
             Vector2 movement = input.normalized * moveSpeed * speedMultiplier;
             rb.velocity = movement;
-
-            //if (input.x != 0) sprite.flipX = input.x < 0;
-            //if (input.y != 0) sprite.flipY = input.y < 0;
         } 
     }
 

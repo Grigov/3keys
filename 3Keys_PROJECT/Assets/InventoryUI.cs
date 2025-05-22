@@ -96,7 +96,7 @@ public class InventoryUI : MonoBehaviour
     void UseConsumable(Item item, int slotIndex)
     {
         UnityEngine.Debug.Log($"UseConsumable! item = {item}, slot i = {slotIndex}");
-        Health playerHealth = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Health>();
+        Health playerHealth = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerHealth>();
         if (playerHealth == null) return;
 
         playerHealth.Heal(item.restoreAmount);
@@ -191,7 +191,7 @@ public class InventoryUI : MonoBehaviour
 
         descriptionPanel.SetActive(true);
         descriptionText.text = slot.item.itemName + "\n\n" + slot.item.description;
-        localPoint += new Vector2(45, 45);
+        localPoint += new Vector2(90, 90);
         descriptionPanel.GetComponent<RectTransform>().anchoredPosition = localPoint;
     }
 

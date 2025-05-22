@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +12,10 @@ public class PlayerHealth : Health
             Instance = this;
         else
             Destroy(gameObject);
+    }
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
     }
 }
 

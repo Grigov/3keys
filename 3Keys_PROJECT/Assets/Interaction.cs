@@ -7,25 +7,12 @@ public class Interaction : MonoBehaviour
     public GameObject fElement;
     public GameObject enter0;
     public GameObject enter1;
-    public GameObject InfoPanel;
     public GameObject endPanel;
     private bool isEndPanelNear = false;
     private bool isPlayerNear = false;
     private bool isShopUINear = false;
     private bool isEnterNear = false;
     private bool isEnter1Near = false;
-
-    //void Start()
-    //{
-    //    InfoPanel.SetActive(true);
-    //}
-
-    //public void ExitInfoPanel()
-    //{
-    //    InfoPanel.SetActive(false);
-    //}
-
-
 
     void Update()
     {
@@ -34,6 +21,7 @@ public class Interaction : MonoBehaviour
             shopUI.SetActive(!shopUI.activeSelf);
             ShopUI.Instance.ShowSellMenu();
             ShopUI.Instance.ShowBuyMenu();
+            BuyItemsStat.Ins.RefreshPrises();
         }
 
         if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEnterNear)
@@ -46,12 +34,9 @@ public class Interaction : MonoBehaviour
             enter1.SetActive(!enter1.activeSelf);
         }
 
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEndPanelNear)
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.F) && isEndPanelNear && DataPlayer.keys >= 3)
         {
-            if (DataPlayer.keys >= 3)
-            {
-                endPanel.SetActive(!endPanel.activeSelf);
-            }
+            endPanel.SetActive(!endPanel.activeSelf);
         }
     }
 
@@ -73,7 +58,7 @@ public class Interaction : MonoBehaviour
             {
                 isEnter1Near = true;
             }
-            else if (!other.CompareTag("End"))
+            else if (other.CompareTag("End"))
             {
                 isEndPanelNear = true;
             }

@@ -1,41 +1,46 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class SwordWeapon : Weapon
 {
-    [Header("Sword Settings")]
-    public GameObject slashEffect;
-    public float attackAngle = 120f;
+    [Header("Rotation Animation")]
+    [SerializeField] private AnimationCurve rotationCurve;
+
+    [Header("Attack Settings")]
+    [SerializeField] private float attackAngle = 90f;
+
+
+    private bool isSwinging;
+
 
     protected override void PerformAttack(Vector2 direction)
     {
-        // 1. Визуальный эффект
-        if (slashEffect)
+        if (!isSwinging)
         {
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion rotation = Quaternion.Euler(0, 0, angle);
-
-            Instantiate(slashEffect, transform.position, rotation);
+            StartCoroutine(SwingAnimation(direction));
         }
+        //if (slashEffect)
+        //{
+        //    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        //    Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
-        // 2. Получаем всех врагов в радиусе
+        //    Instantiate(slashEffect, transform.position, rotation);
+        //}
         Collider2D[] hits = Physics2D.OverlapCircleAll(
             transform.position,
             attackRange,
             enemyLayer
         );
 
-        // 3. Фильтрация и нанесение урона
         foreach (var hit in hits)
         {
             if (hit == null) continue;
 
-            // Проверка тега и компонента
             if (!hit.CompareTag("Enemy")) continue;
 
             Health enemyHealth = hit.GetComponent<Health>();
             if (enemyHealth == null || enemyHealth.IsDead()) continue;
 
-            // Проверка угла атаки
             Vector2 toEnemy = (hit.transform.position - transform.position).normalized;
             float angle = Vector2.Angle(direction, toEnemy);
 
@@ -45,30 +50,43 @@ public class SwordWeapon : Weapon
                 Debug.Log($"Hit: {hit.name} | Damage: {damage} | Angle: {angle}°");
             }
         }
-
-        // 4. Визуализация (только в редакторе)
-        Debug.DrawRay(transform.position, direction * attackRange, Color.red, 1f);
-        #if UNITY_EDITOR
-        DrawAttackArc(direction);
-        #endif
     }
 
-    #if UNITY_EDITOR
-    void DrawAttackArc(Vector2 direction)
+    private IEnumerator SwingAnimation(Vector2 direction)
     {
-        Vector3 startDir = Quaternion.Euler(0, 0, -attackAngle / 2) * direction;
-        UnityEditor.Handles.color = new Color(1, 0, 0, 0.1f);
-        UnityEditor.Handles.DrawSolidArc(
-            transform.position,
-            Vector3.forward,
-            startDir,
-            attackAngle,
-            attackRange
-        );
+        float windUpDuration = 0.1f;     // замах
+        float swingDuration = 0.15f;     // удар
+        float swingAngle = -90f;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        float windUpAngle = angle - swingAngle / 2;
+        float attackAngle = angle + swingAngle / 2;
+
+        float elapsed = 0f;
+        while (elapsed < windUpDuration)
+        {
+            float t = elapsed / windUpDuration;
+            float currentAngle = Mathf.Lerp(angle, windUpAngle, t);
+            transform.rotation = Quaternion.Euler(0, 0, currentAngle);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        elapsed = 0f;
+        while (elapsed < swingDuration)
+        {
+            float t = elapsed / swingDuration;
+            float currentAngle = Mathf.Lerp(windUpAngle, attackAngle, t);
+            transform.rotation = Quaternion.Euler(0, 0, currentAngle);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
-    #endif
-
-
 
     //void OnDrawGizmosSelected()
     //{

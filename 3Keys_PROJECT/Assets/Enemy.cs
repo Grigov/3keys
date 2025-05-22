@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Rotation Settings")]
+    [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private bool rotateOnlyInAggro = true;
+    [SerializeField] private float angleOffset = 90f;
+
     [Header("Enemy Settings")]
     public float moveSpeed = 3f;
     public float detectionRange = 5f;
@@ -22,8 +27,8 @@ public class Enemy : MonoBehaviour
     private bool lootDropped = false;
 
     [Header("Loot")]
-    public GameObject[] lootPrefabs; // Префабы предметов (например, меч, зелье и т.д.)
-    public float dropChance = 1f; // Вероятность дропа (0..1)
+    public GameObject[] lootPrefabs;
+    public float dropChance = 1f;
 
 
     void Start()
@@ -35,6 +40,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if (isAggressive || !rotateOnlyInAggro)
+        {
+            RotateTowardsPlayer();
+        }
+
         if (player == null || health.IsDead())
         {
             if (health.IsDead() && !lootDropped)
@@ -72,29 +82,39 @@ public class Enemy : MonoBehaviour
         rb.velocity = Vector2.zero;
     }
 
+    private void RotateTowardsPlayer()
+    {
+        if (player == null) return;
+
+        Vector2 direction = player.position - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + angleOffset;
+
+        Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            rotationSpeed * Time.deltaTime
+        );
+    }
+
     void ChasePlayer()
     {
+        if (player == null) return;
+
         Vector2 direction = (player.position - transform.position).normalized;
         rb.velocity = direction * moveSpeed;
-
-        // Простой поворот спрайта
-        if (direction.x > 0)
-            transform.localScale = new Vector3(1, 1, 1);
-        else if (direction.x < 0)
-            transform.localScale = new Vector3(-1, 1, 1);
     }
 
     void AttackPlayer()
     {
+
         if (Time.time - lastAttackTime < attackCooldown) return;
 
         lastAttackTime = Time.time;
 
-        // Проверяем, что игрок все еще в радиусе атаки
         if (Vector2.Distance(transform.position, player.position) <= attackRange)
         {
             player.GetComponent<Health>().TakeDamage(damage);
-            //Debug.Log($"Враг нанес {damage} урона игроку!");
         }
     }
 
@@ -126,8 +146,6 @@ public class Enemy : MonoBehaviour
                 Instantiate(loot, transform.position, Quaternion.identity);
             }
         }
-
-        //Debug.Log("Враг уронил предметы!");
     }
 
 }

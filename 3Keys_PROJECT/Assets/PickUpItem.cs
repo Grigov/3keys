@@ -11,6 +11,7 @@ public class PickUpItem : MonoBehaviour
             bool added = Inventory.Instance.AddItem(item);
             if (added)
             {
+                GetComponent<SceneObject>()?.MarkAsDestroyed();
                 Destroy(gameObject);
             }
         }
