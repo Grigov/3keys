@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 178795526}
   - component: {fileID: 178795525}
   - component: {fileID: 178795527}
+  - component: {fileID: 178795528}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -211,6 +212,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSceneName: GameMenu
+--- !u!114 &178795528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178795523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19fc0baa151f4f4e9d632194606af80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneName: 
+  targetSpawnID: 
+  healthHeal: 0
 --- !u!1 &422899111
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +548,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 178795528}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
         m_MethodName: Exit
         m_Mode: 1
